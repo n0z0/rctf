@@ -42,7 +42,7 @@ func initIcon() (string, error) {
 	return iconPath, err
 }
 
-func notifikasi(pesan string) error {
+func NotifikasiDesktop(pesan string) error {
 	path, err := initIcon()
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func notifikasi(pesan string) error {
 	return beeep.Notify("Judul Notif", pesan, path)
 }
 
-func playNotificationSound() {
+func PlayNotificationSound() {
 	// decode WAV dari byte yang di-embed
 	streamer, format, err := wav.Decode(bytes.NewReader(notifWav))
 	if err != nil {
