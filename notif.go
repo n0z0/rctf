@@ -13,6 +13,7 @@ import (
 	"github.com/faiface/beep/speaker"
 	"github.com/faiface/beep/wav"
 	"github.com/gen2brain/beeep"
+	"github.com/go-vgo/robotgo"
 )
 
 //go:embed art/tot2wuk2.wav
@@ -73,4 +74,23 @@ func PlayNotificationSound() {
 	})))
 
 	<-done
+}
+
+func RandomKlik() {
+	// pindah ke koordinat (x=500, y=300)
+	robotgo.Move(500, 300)
+
+	// pause dikit
+	time.Sleep(500 * time.Millisecond)
+
+	// klik kiri
+	robotgo.Click("left", false)
+	// pause dikit
+	time.Sleep(500 * time.Millisecond)
+
+	// atau klik kanan
+	robotgo.Click("right", false)
+
+	// atau double click
+	// robotgo.MouseClick("left", true)
 }
