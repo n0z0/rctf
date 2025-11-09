@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/faiface/beep"
@@ -20,22 +21,34 @@ var notifWav []byte
 //go:embed art/indo.png
 var indoPng []byte
 
+var (
+	iconPath string
+	iconOnce sync.Once
+)
+
+// initIcon akan memastikan file PNG ada di disk (temp dir) tepat sekali
+func initIcon() (string, error) {
+	var err error
+	iconOnce.Do(func() {
+		tmpDir := os.TempDir()
+		iconPath = filepath.Join(tmpDir, "indo.png")
+
+		// cek sudah ada atau belum
+		if _, statErr := os.Stat(iconPath); os.IsNotExist(statErr) {
+			// belum ada → tulis
+			err = os.WriteFile(iconPath, indoPng, 0o644)
+		}
+	})
+	return iconPath, err
+}
+
 func notifikasi(pesan string) error {
-	// 2) buat file sementara
-	tmpDir := os.TempDir()
-	iconPath := filepath.Join(tmpDir, "indo.png")
-
-	// tulis isi embed ke file
-	if err := os.WriteFile(iconPath, indoPng, 0o644); err != nil {
+	path, err := initIcon()
+	if err != nil {
 		return err
 	}
 
-	// 3) pakai di beeep
-	if err := beeep.Notify("Judul Notif", pesan, iconPath); err != nil {
-		return err
-	}
-
-	return nil
+	return beeep.Notify("Judul Notif", pesan, path)
 }
 
 func playNotificationSound() {
